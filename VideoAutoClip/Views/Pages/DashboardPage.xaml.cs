@@ -6,6 +6,8 @@
 using System.Windows.Controls;
 using VideoAutoClip.ViewModels.Pages;
 using Wpf.Ui.Controls;
+using System.IO;
+
 
 namespace VideoAutoClip.Views.Pages
 {
@@ -71,9 +73,11 @@ namespace VideoAutoClip.Views.Pages
 
         private void SelectFileButton_Click(object sender, EventArgs e) 
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.Filter = "All Files (*.*)|*.*"; // 设置文件筛选器
-            openFileDialog.Multiselect = true; // 设置是否允许选择多个文件
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "All Files (*.*)|*.*", // 设置文件筛选器
+                Multiselect = true // 设置是否允许选择多个文件
+            };
 
             bool? result = openFileDialog.ShowDialog();
 
@@ -82,7 +86,7 @@ namespace VideoAutoClip.Views.Pages
                 string[] selectedFilePath = openFileDialog.FileNames;
                 // 处理选择的文件路径
                 // 打印语句
-                Console.WriteLine("user choosed file path:" + selectedFilePath);
+                Log4Net.WriteLog("user choosed file path:" + selectedFilePath);
             }
         }
 
