@@ -15,9 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="WPF-UI" Version="3.0.0-preview.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1 " />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1 "/>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1 " />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,16 @@
   <ItemGroup>
     <Resource Include="Assets\wpfui-icon-256.png" />
     <Resource Include="Assets\wpfui-icon-1024.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="configs\" />
   </ItemGroup>
 
 </Project>

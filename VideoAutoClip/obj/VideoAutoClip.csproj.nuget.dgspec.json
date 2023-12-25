@@ -55,6 +55,10 @@
             "WPF-UI": {
               "target": "Package",
               "version": "[3.0.0-preview.4, )"
+            },
+            "log4net": {
+              "target": "Package",
+              "version": "[2.0.15, )"
             }
           },
           "imports": [

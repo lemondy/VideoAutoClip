@@ -56,3 +56,5 @@ D:\workspace\VideoAutoClip\VideoAutoClip\obj\Debug\net7.0-windows\refint\VideoAu
 D:\workspace\VideoAutoClip\VideoAutoClip\obj\Debug\net7.0-windows\VideoAutoClip.pdb
 D:\workspace\VideoAutoClip\VideoAutoClip\obj\Debug\net7.0-windows\VideoAutoClip.genruntimeconfig.cache
 D:\workspace\VideoAutoClip\VideoAutoClip\obj\Debug\net7.0-windows\ref\VideoAutoClip.dll
+D:\workspace\VideoAutoClip\VideoAutoClip\bin\Debug\net7.0-windows\log4net.dll
+D:\workspace\VideoAutoClip\VideoAutoClip\bin\Debug\net7.0-windows\log4net.config
