@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Ok1UqsSwmU4V8upBrEcp21EJJ2ysetRNg7e3X85DSl5u9hrSeGxvJw7T6AAOhfrWdFszzz7by+T8aJqpvxYCCQ==",
+  "dgSpecHash": "TMeB6F3Viv+YwZxLm4JhLETNAczNjXrstT9iN40hI1vYAraBKQgHa7cRIR1l2dIgT2cp1qyP8XxdSXmaGMzo3g==",
   "success": true,
   "projectFilePath": "D:\\workspace\\VideoAutoClip\\VideoAutoClip\\VideoAutoClip.csproj",
   "expectedPackageFiles": [
@@ -43,7 +43,30 @@
     "C:\\Users\\Administrator\\.nuget\\packages\\system.security.principal.windows\\4.5.0\\system.security.principal.windows.4.5.0.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\system.text.encodings.web\\7.0.0\\system.text.encodings.web.7.0.0.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\system.text.json\\7.0.0\\system.text.json.7.0.0.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\windowsapicodepack-core\\1.1.1\\windowsapicodepack-core.1.1.1.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\windowsapicodepack-shell\\1.1.1\\windowsapicodepack-shell.1.1.1.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\wpf-ui\\3.0.0-preview.4\\wpf-ui.3.0.0-preview.4.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "已使用“.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1”而不是项目目标框架“net7.0-windows7.0”还原包“WindowsAPICodePack-Core 1.1.1”。此包可能与项目不完全兼容。",
+      "libraryId": "WindowsAPICodePack-Core",
+      "targetGraphs": [
+        "net7.0-windows7.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "已使用“.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1”而不是项目目标框架“net7.0-windows7.0”还原包“WindowsAPICodePack-Shell 1.1.1”。此包可能与项目不完全兼容。",
+      "libraryId": "WindowsAPICodePack-Shell",
+      "targetGraphs": [
+        "net7.0-windows7.0"
+      ]
+    }
+  ]
 }

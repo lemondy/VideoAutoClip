@@ -7,7 +7,9 @@ using System.Windows.Controls;
 using VideoAutoClip.ViewModels.Pages;
 using Wpf.Ui.Controls;
 using System.IO;
-
+using VideoAutoClip.Helpers;
+using System;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace VideoAutoClip.Views.Pages
 {
@@ -71,7 +73,7 @@ namespace VideoAutoClip.Views.Pages
         }
 
 
-        private void SelectFileButton_Click(object sender, EventArgs e) 
+        private void SelectFileButton_Click(object sender, EventArgs e)
         {
             var openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
@@ -80,23 +82,77 @@ namespace VideoAutoClip.Views.Pages
             };
 
             bool? result = openFileDialog.ShowDialog();
+            List<string> selectedFiles = new List<string>();
 
             if (result == true)
             {
-                string[] selectedFilePath = openFileDialog.FileNames;
+
+                foreach (string item in openFileDialog.FileNames)
+                {
+                    selectedFiles.Add(item);
+                }
                 // 处理选择的文件路径
                 // 打印语句
-                Log4Net.WriteLog("user choosed file path:" + selectedFilePath);
+                Log4Net.WriteLog("SelectFileButton_Click", string.Format("user choosed file path:{0}", string.Join(",", selectedFiles)));
+                VideoClip(selectedFiles);
             }
         }
 
-        private void VideoClip(string[] filePaths)
+        private void VideoClip(List<string> filePaths, string waterMark)
         {
+            // 当前目录下创建tmp目录，用来存放临时文件；
+            string currentDir = Directory.GetCurrentDirectory();
+            string tmpOutputDir = Path.Combine(currentDir, "tmp");
+
+            if (!Directory.Exists(tmpOutputDir))
+            {
+                Directory.CreateDirectory(tmpOutputDir);
+            }
+            // 文件排序
+            List<string> sortedSelectFiles = filePaths.OrderBy(x => x).ToList();
+
             // 1. 每个视频前几秒和后几秒切掉；
-            // 2. 每个视频的比例变成1：1
-            // 3. 视频和视频之间利用叠化转场；
-            // 4. 视频其他区域变成模糊
-            // 5. 视频按照选择的顺序拼接，或者shuffle之后拼接
+            List<string> runFfmpegCmds = new();
+            string outputFile = "";
+            string ffmpegCmd = "";
+            List<string> cuttedFilePath = new();
+            foreach (string file in sortedSelectFiles)
+            {
+                outputFile = tmpOutputDir + "\\" + file.Split("\\").Last();
+                cuttedFilePath.Add(outputFile);
+                ffmpegCmd = FFmpegHelper.videoCutDuration(file, outputFile);
+                runFfmpegCmds.Add(ffmpegCmd);
+            }
+            Log4Net.WriteLog("VideoClip", string.Format("accomplish video cut cmd, cmd cnt:{0}", runFfmpegCmds.Count));
+            // 2. 每个视频的比例变成1.1倍 视频和视频之间利用叠化转场；
+            string concatMultiVideo = tmpOutputDir + "concat_res.mp4";
+            runFfmpegCmds.Add(FFmpegHelper.concatMultiVideo(cuttedFilePath, concatMultiVideo));
+            Log4Net.WriteLog("VideoClip", string.Format("accomplish concatMultiVideo, cmd cnt:{0}", runFfmpegCmds.Count));
+            // 3. 视频增加文字水印
+            if (!string.IsNullOrEmpty(waterMark))
+            {
+                runFfmpegCmds.Add(FFmpegHelper.videoAddText(concatMultiVideo, waterMark));
+            }
+            foreach (string cmd in runFfmpegCmds)
+            {
+                FFmpegHelper.runFFmpeg(cmd);
+            }
+
+            Log4Net.WriteLog("VideoClip", string.Format("accomplish video process, cmd cnt:{0}", runFfmpegCmds.Count));
+
+        }
+
+        private void SelectOutputDirButton_Click(object sender, RoutedEventArgs e)
+        {
+            CommonOpenFileDialog dialog = new();
+            dialog.Title = "选择文件夹";
+            string selectDir = "";
+            dialog.IsFolderPicker = true;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                selectDir = dialog.FileName;
+            }
+            Log4Net.WriteLog("SelectOutputDirButton_Click", string.Format("output directory:{0}", selectDir));
         }
     }
 }
