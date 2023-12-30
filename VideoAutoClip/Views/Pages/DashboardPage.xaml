@@ -53,11 +53,10 @@
             <ui:Button
                  x:Name="VideoPauseButton"
                  Content="暂停"
-                 HorizontalAlignment="left"
-                 Width="60" VerticalAlignment="Top" Click="VideoPauseButton_Click"/>
+                 Width="60" Click="VideoPauseButton_Click"/>
             <TextBlock 
                  Foreground="Black" 
-                 HorizontalAlignment="left" >音量</TextBlock>
+                 HorizontalAlignment="left" ><Run Text="音量"/></TextBlock>
             <Slider 
                  x:Name="VideoVolumeSlider"
                  ValueChanged="ChangeMediaVolume" 
@@ -67,7 +66,7 @@
             <TextBlock 
                  Foreground="Black" 
                  HorizontalAlignment="left"  
-                 VerticalAlignment="Top">跳转</TextBlock>
+                 VerticalAlignment="Top"><Run Text="跳转"/></TextBlock>
             <Slider 
                   x:Name="timelineSlider" 
                   HorizontalAlignment="left"
@@ -76,8 +75,33 @@
         </StackPanel>
         <ui:Button
             Grid.Row="2"
-            Content="选择文件" 
+            Content="选择视频文件" 
+            Width="116"
             Foreground="Black" 
             Click="SelectFileButton_Click" />
+        <ui:Button
+            Grid.Row="2"
+            Content="选择输出路径" 
+            Width="120"
+            Foreground="Black" 
+            Click="SelectOutputDirButton_Click" Margin="341,0,0,0" />
+        <ui:TextBlock
+            x:Name="selectedFileTextBlock"
+            Grid.Row="3"
+            Width="220"
+            Foreground="Black"
+            Text="选中的视频文件"
+            IsEnabled="False" 
+            Margin="87,10,893,4"
+            />
+        <ui:TextBlock
+            x:Name="selectedOutputDirTextBlock"
+            Grid.Row="3"
+            Width="220"
+            Foreground="Black"
+            Text="处理后文件保存路径"
+            IsEnabled="False" 
+            Margin="291,10,689,4"
+            />
     </Grid>
 </Page>

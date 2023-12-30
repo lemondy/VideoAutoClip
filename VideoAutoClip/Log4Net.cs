@@ -10,20 +10,24 @@ using log4net.Config;
 
 namespace VideoAutoClip
 {
-    internal class Log4Net
+    public static class Log4Net
     {
         public static readonly ILog loginfo = LogManager.GetLogger("loginfo");
         public static readonly ILog logerror = LogManager.GetLogger("logerror");
-        public static void WriteLog(string info)
+        public static void WriteLog(string ndcInfo, string info)
         {
+            NDC.Clear();
+            NDC.Push(ndcInfo);
             if (loginfo.IsInfoEnabled)
             {
                 loginfo.Info(info);
             }
         }
 
-        public static void WriteLog(string info, Exception se)
+        public static void WriteError(string ndcInfo, string info, Exception se)
         {
+            NDC.Clear();
+            NDC.Push(ndcInfo);
             if (logerror.IsErrorEnabled)
             {
                 logerror.Error(info, se);
