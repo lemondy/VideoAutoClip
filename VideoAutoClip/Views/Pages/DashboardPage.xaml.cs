@@ -16,6 +16,8 @@ namespace VideoAutoClip.Views.Pages
     public partial class DashboardPage : INavigableView<DashboardViewModel>
     {
         public DashboardViewModel ViewModel { get; }
+        List<string> selectedVideoFiles = new List<string>();
+        string finalVideoOutFile = "";
 
         public DashboardPage(DashboardViewModel viewModel)
         {
@@ -153,6 +155,11 @@ namespace VideoAutoClip.Views.Pages
                 selectDir = dialog.FileName;
             }
             Log4Net.WriteLog("SelectOutputDirButton_Click", string.Format("output directory:{0}", selectDir));
+        }
+
+        private void doOperation_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
