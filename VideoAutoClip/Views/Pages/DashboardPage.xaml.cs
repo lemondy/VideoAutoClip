@@ -16,7 +16,9 @@ namespace VideoAutoClip.Views.Pages
     public partial class DashboardPage : INavigableView<DashboardViewModel>
     {
         public DashboardViewModel ViewModel { get; }
-        List<string> selectedVideoFiles = new List<string>();
+        List<string> selectedVideoFiles = new();
+        string waterMark = "";
+        string videoOutDir = "";
         string finalVideoOutFile = "";
 
         public DashboardPage(DashboardViewModel viewModel)
@@ -25,10 +27,9 @@ namespace VideoAutoClip.Views.Pages
             DataContext = this;
 
             InitializeComponent();
-            mediaPlayer.Source = new Uri("D:\\workspace\\auto-clip\\concat_video.mp4", UriKind.RelativeOrAbsolute);
-            mediaPlayer.Play();
-            mediaPlayer.Position = TimeSpan.FromSeconds(1); // 设置位置为第一秒
-            mediaPlayer.Pause(); // 暂停播放
+
+            selectedFileTextBlock.Visibility = Visibility.Hidden;
+            selectedOutputDirTextBlock.Visibility = Visibility.Hidden;
 
         }
 
@@ -77,6 +78,9 @@ namespace VideoAutoClip.Views.Pages
 
         private void SelectFileButton_Click(object sender, EventArgs e)
         {
+            /**
+             * 选择多个视频文件
+             */
             var openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
                 Filter = "All Files (*.*)|*.*", // 设置文件筛选器
@@ -84,31 +88,32 @@ namespace VideoAutoClip.Views.Pages
             };
 
             bool? result = openFileDialog.ShowDialog();
-            List<string> selectedFiles = new List<string>();
 
             if (result == true)
             {
 
                 foreach (string item in openFileDialog.FileNames)
                 {
-                    selectedFiles.Add(item);
+                    selectedVideoFiles.Add(item);
                 }
                 // 处理选择的文件路径
                 // 打印语句
-                Log4Net.WriteLog("SelectFileButton_Click", string.Format("user choosed file path:{0}", string.Join(",", selectedFiles)));
-                VideoClip(selectedFiles);
+                Log4Net.WriteLog("SelectFileButton_Click", string.Format("user choosed file path:{0}", string.Join(",", selectedVideoFiles)));
+                //VideoClip(selectedFiles);
             }
+            selectedFileTextBlock.Text = string.Join(",", selectedVideoFiles);
+            selectedFileTextBlock.Visibility = Visibility.Visible;
         }
 
         private void VideoClip(List<string> filePaths, string waterMark)
         {
             // 当前目录下创建tmp目录，用来存放临时文件；
             string currentDir = Directory.GetCurrentDirectory();
-            string tmpOutputDir = Path.Combine(currentDir, "tmp");
+            videoOutDir = Path.Combine(currentDir, "tmp");
 
-            if (!Directory.Exists(tmpOutputDir))
+            if (!Directory.Exists(videoOutDir))
             {
-                Directory.CreateDirectory(tmpOutputDir);
+                Directory.CreateDirectory(videoOutDir);
             }
             // 文件排序
             List<string> sortedSelectFiles = filePaths.OrderBy(x => x).ToList();
@@ -120,20 +125,21 @@ namespace VideoAutoClip.Views.Pages
             List<string> cuttedFilePath = new();
             foreach (string file in sortedSelectFiles)
             {
-                outputFile = tmpOutputDir + "\\" + file.Split("\\").Last();
+                outputFile = videoOutDir + "\\" + file.Split("\\").Last();
                 cuttedFilePath.Add(outputFile);
                 ffmpegCmd = FFmpegHelper.videoCutDuration(file, outputFile);
                 runFfmpegCmds.Add(ffmpegCmd);
             }
             Log4Net.WriteLog("VideoClip", string.Format("accomplish video cut cmd, cmd cnt:{0}", runFfmpegCmds.Count));
             // 2. 每个视频的比例变成1.1倍 视频和视频之间利用叠化转场；
-            string concatMultiVideo = tmpOutputDir + "concat_res.mp4";
+            string concatMultiVideo = videoOutDir + "concat_res.mp4";
             runFfmpegCmds.Add(FFmpegHelper.concatMultiVideo(cuttedFilePath, concatMultiVideo));
             Log4Net.WriteLog("VideoClip", string.Format("accomplish concatMultiVideo, cmd cnt:{0}", runFfmpegCmds.Count));
             // 3. 视频增加文字水印
+            finalVideoOutFile = videoOutDir + "\\finalVideo.mp4";
             if (!string.IsNullOrEmpty(waterMark))
             {
-                runFfmpegCmds.Add(FFmpegHelper.videoAddText(concatMultiVideo, waterMark));
+                runFfmpegCmds.Add(FFmpegHelper.videoAddText(concatMultiVideo, waterMark, finalVideoOutFile));
             }
             foreach (string cmd in runFfmpegCmds)
             {
@@ -146,20 +152,32 @@ namespace VideoAutoClip.Views.Pages
 
         private void SelectOutputDirButton_Click(object sender, RoutedEventArgs e)
         {
+            /**
+             * 选择文件处理后保存的文件夹
+             */
             CommonOpenFileDialog dialog = new();
             dialog.Title = "选择文件夹";
-            string selectDir = "";
             dialog.IsFolderPicker = true;
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                selectDir = dialog.FileName;
+                videoOutDir = dialog.FileName;
             }
-            Log4Net.WriteLog("SelectOutputDirButton_Click", string.Format("output directory:{0}", selectDir));
+            Log4Net.WriteLog("SelectOutputDirButton_Click", string.Format("output directory:{0}", videoOutDir));
+            selectedOutputDirTextBlock.Visibility = Visibility.Visible;
+            selectedOutputDirTextBlock.Text = videoOutDir;
         }
 
         private void doOperation_Click(object sender, RoutedEventArgs e)
         {
-
+            if (watermarkTextBox.Text != "")
+            {
+                waterMark = watermarkTextBox.Text;
+            }
+            VideoClip(selectedVideoFiles, waterMark);
+            mediaPlayer.Source = new Uri(finalVideoOutFile, UriKind.RelativeOrAbsolute);
+            mediaPlayer.Play();
+            mediaPlayer.Position = TimeSpan.FromSeconds(1); // 设置位置为第一秒
+            mediaPlayer.Pause(); // 暂停播放
         }
     }
 }

@@ -16,17 +16,28 @@
 
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.15" />
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
     <PackageReference Include="WPF-UI" Version="3.0.0-preview.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1 " />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1 " />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\execute.png" />
+    <None Remove="Assets\pause.png" />
+    <None Remove="Assets\play.png" />
+    <None Remove="Assets\volume.png" />
+    <None Remove="Assets\volumn-off.png" />
     <None Remove="Assets\wpfui-icon-256.png" />
     <None Remove="Assets\wpfui-icon-1024.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\pause.png" />
+    <Resource Include="Assets\execute.png" />
+    <Resource Include="Assets\play.png" />
+    <Resource Include="Assets\volume.png" />
+    <Resource Include="Assets\volumn-off.png" />
     <Resource Include="Assets\wpfui-icon-256.png" />
     <Resource Include="Assets\wpfui-icon-1024.png" />
   </ItemGroup>
