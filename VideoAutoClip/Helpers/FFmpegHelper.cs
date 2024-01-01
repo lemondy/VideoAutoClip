@@ -72,7 +72,7 @@ namespace VideoAutoClip.Helpers
             return ffmpeg_cmd;
         }
 
-        public static string videoAddText(string videoPath, string videoText)
+        public static string videoAddText(string videoPath, string videoText, string outputFile)
         {
             /*** 给视频底部居中增加文字
              * drawtext: 使用drawtext过滤器添加文字
@@ -83,7 +83,7 @@ namespace VideoAutoClip.Helpers
              * fontsize: 指定字体大小为30像素
             */
             string ffmpeg_cmd = $"ffmpeg -i {videoPath} -vf \"drawtext=text='{videoText}':x=(w-text_w)/2:y=h-th-5:fontcolor=white@0.2:fontsize=15\"";
-            ffmpeg_cmd += " -y output_text.mp4";
+            ffmpeg_cmd += " -y " + outputFile;
             /*runFFmpeg(ffmpeg_cmd);*/
             return ffmpeg_cmd;
         }

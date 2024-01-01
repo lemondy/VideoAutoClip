@@ -9,20 +9,20 @@
     Title="DashboardPage"
     d:DataContext="{d:DesignInstance local:DashboardPage,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="800"
-    d:DesignWidth="1200"
+    d:DesignHeight="1125"
+    d:DesignWidth="1920"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid Width="auto" Height="650">
+    <Grid Width="auto" Margin="0,75,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="400"/>
-            <RowDefinition Height="50" />
+            <RowDefinition Height="100" />
             <RowDefinition Height="32*"/>
-            <RowDefinition Height="53*"/>
+            <RowDefinition Height="80"/>
 
         </Grid.RowDefinitions>
 
@@ -37,71 +37,91 @@
         <MediaElement 
             Grid.Row="1"
             x:Name="mediaPlayer"
-            Width="300" Height="400"
             LoadedBehavior="Manual" 
            
             Stretch="Fill" 
             MediaOpened="Element_MediaOpened" 
-            MediaEnded="Element_MediaEnded" Margin="350,0,350,0"/>
-        <StackPanel 
-            Grid.Row="1">
+            MediaEnded="Element_MediaEnded" Margin="337,0,386,58"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
             <ui:Button 
                  x:Name="VideoPlayButton"
                  Content="播放"
-                 HorizontalAlignment="left"
-                 Width="60" VerticalAlignment="Top" Click="VideoPlayButton_Click"/>
+                Margin="10, 0,0,0"
+                 Width="60" Click="VideoPlayButton_Click" Appearance="Primary"/>
             <ui:Button
-                 x:Name="VideoPauseButton"
-                 Content="暂停"
-                 Width="60" Click="VideoPauseButton_Click"/>
-            <TextBlock 
-                 Foreground="Black" 
-                 HorizontalAlignment="left" ><Run Text="音量"/></TextBlock>
+                     x:Name="VideoPauseButton"
+                     Content="暂停"
+                
+                     Width="60" Click="VideoPauseButton_Click" Appearance="Primary"/>
+            <Image Source="/Assets/Pause.png" Stretch="Fill" Width="60" Height="40"/>
+            <Image Height="59" Source="/Assets/volume.png" Stretch="Fill" Width="65"/>
             <Slider 
-                 x:Name="VideoVolumeSlider"
-                 ValueChanged="ChangeMediaVolume" 
-                 Minimum="0" Maximum="1" Value="0.5" 
-                 HorizontalAlignment="left"
-                 Width="120"/>
-            <TextBlock 
-                 Foreground="Black" 
-                 HorizontalAlignment="left"  
-                 VerticalAlignment="Top"><Run Text="跳转"/></TextBlock>
-            <Slider 
-                  x:Name="timelineSlider" 
-                  HorizontalAlignment="left"
-                  ValueChanged="SeekToMediaPosition"
-                  Width="70"/>
+                     x:Name="VideoVolumeSlider"
+                     ValueChanged="ChangeMediaVolume" 
+                     Minimum="0" Maximum="1" Value="0.5"
+                     Width="375" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </StackPanel>
+        <Slider 
+                Grid.Row="1"
+                  x:Name="timelineSlider" 
+                  HorizontalAlignment="Center"
+                  ValueChanged="SeekToMediaPosition"
+                  Width="1790" Margin="0,357,0,22"/>
+
         <ui:Button
-            Grid.Row="2"
+            Grid.Row="3"
             Content="选择视频文件" 
-            Width="116"
+            Width="134"
             Foreground="Black" 
-            Click="SelectFileButton_Click" />
+            Click="SelectFileButton_Click" Appearance="Primary" Height="60" Margin="33,98,0,0" VerticalAlignment="Top" />
         <ui:Button
-            Grid.Row="2"
+            Grid.Row="3"
             Content="选择输出路径" 
-            Width="120"
+            Width="130"
             Foreground="Black" 
-            Click="SelectOutputDirButton_Click" Margin="341,0,0,0" />
+            Click="SelectOutputDirButton_Click" Margin="273,103,0,0" Appearance="Primary" Height="60" VerticalAlignment="Top" />
         <ui:TextBlock
             x:Name="selectedFileTextBlock"
             Grid.Row="3"
-            Width="220"
             Foreground="Black"
             Text="选中的视频文件"
             IsEnabled="False" 
-            Margin="87,10,893,4"
+            Margin="20,252,0,0"  Width="306" MaxHeight="200" ScrollViewer.CanContentScroll="True" UseLayoutRounding="True" Cursor="" TextTrimming="WordEllipsis" HorizontalAlignment="Left" TextWrapping="Wrap" Height="100"
             />
         <ui:TextBlock
             x:Name="selectedOutputDirTextBlock"
             Grid.Row="3"
-            Width="220"
             Foreground="Black"
             Text="处理后文件保存路径"
             IsEnabled="False" 
-            Margin="291,10,689,4"
+            Margin="466,290,0,44" TextWrapping="Wrap" TextTrimming="WordEllipsis" HorizontalAlignment="Left" Width="352" MaxHeight="200" Height="98"
             />
+        <ui:Button
+            x:Name="DoVideoOperationBtn"
+            Grid.Row="4" 
+            Width="135"
+            Height="60"
+            Foreground="Black" 
+            Click="doOperation_Click" Margin="27,0,0,0" Appearance="Primary" FontSize="16" FontFamily="Arial" Background="#FF3393EB" >
+
+            <StackPanel Orientation="Horizontal" Height="35" Width="98">
+                <Image Height="22" Source="/Assets/execute.png" Stretch="Fill" Width="25">
+                    <Image.OpacityMask>
+                        <SolidColorBrush Color="#FFEEE9E9" Opacity="0.5"/>
+                    </Image.OpacityMask>
+                </Image>
+                <TextBlock VerticalAlignment="Center" Width="67" FontSize="20" Foreground="White"><Run Language="zh-cn" Text=" "/><Run Text="执行"/></TextBlock>
+            </StackPanel>
+        </ui:Button>
+
+        <ui:TextBox
+            x:Name="watermarkTextBox"
+            Grid.Row="3"
+            Height="40"
+            Width="200"
+            PlaceholderText="请输入水印内容" 
+            Margin="496,118,1224,282" MaxLines="1"
+            />
+
     </Grid>
 </Page>

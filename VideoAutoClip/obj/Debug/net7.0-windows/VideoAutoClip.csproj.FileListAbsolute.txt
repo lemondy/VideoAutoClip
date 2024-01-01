@@ -58,3 +58,5 @@ D:\workspace\VideoAutoClip\VideoAutoClip\obj\Debug\net7.0-windows\VideoAutoClip.
 D:\workspace\VideoAutoClip\VideoAutoClip\obj\Debug\net7.0-windows\ref\VideoAutoClip.dll
 D:\workspace\VideoAutoClip\VideoAutoClip\bin\Debug\net7.0-windows\log4net.dll
 D:\workspace\VideoAutoClip\VideoAutoClip\bin\Debug\net7.0-windows\log4net.config
+D:\workspace\VideoAutoClip\VideoAutoClip\bin\Debug\net7.0-windows\Microsoft.WindowsAPICodePack.dll
+D:\workspace\VideoAutoClip\VideoAutoClip\bin\Debug\net7.0-windows\Microsoft.WindowsAPICodePack.Shell.dll
