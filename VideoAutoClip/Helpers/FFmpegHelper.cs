@@ -43,7 +43,7 @@ namespace VideoAutoClip.Helpers
             }
             // 去掉视频最后一秒
             string end_time = duration.Subtract(TimeSpan.FromSeconds(1)).ToString();
-            string ffmpegArgs = $"-ss {start_time} -t {end_time} -c copy -i \"{inputFilePath}\" \"{outputFilePath}\"";
+            string ffmpegArgs = $"-ss {start_time} -t {end_time} -i \"{inputFilePath}\" \"{outputFilePath}\"";
             // runFFmpeg(ffmpegArgs);
             return ffmpegArgs;
         }
