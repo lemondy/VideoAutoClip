@@ -141,6 +141,7 @@ namespace VideoAutoClip.Views.Pages
             {
                 runFfmpegCmds.Add(FFmpegHelper.videoAddText(concatMultiVideo, waterMark, finalVideoOutFile));
             }
+            Log4Net.WriteLog("VideoClip", string.Format("before run ffmpeg cmd, all:{0}", string.Join(",", runFfmpegCmds)));
             foreach (string cmd in runFfmpegCmds)
             {
                 FFmpegHelper.runFFmpeg(cmd);
@@ -169,8 +170,10 @@ namespace VideoAutoClip.Views.Pages
 
         private void doOperation_Click(object sender, RoutedEventArgs e)
         {
+            Log4Net.WriteLog("doOperation_Click", "start to process video");
             if (watermarkTextBox.Text != "")
             {
+                Log4Net.WriteLog("doOperation_Click", string.Format("watermark is not null, user input wartermark:{0}", watermarkTextBox.Text));
                 waterMark = watermarkTextBox.Text;
             }
             VideoClip(selectedVideoFiles, waterMark);
