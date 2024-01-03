@@ -15,7 +15,7 @@ namespace VideoAutoClip.Helpers
 */
         public static string ffmpegPath = GetPathFromEnv("PATH", "ffmpeg.exe");
 
-        static string GetPathFromEnv(string varName, string filename)
+        static string? GetPathFromEnv(string varName, string filename)
         {
             string[] paths = Environment.GetEnvironmentVariable(varName).Split(';');
             foreach (string path in paths)
@@ -43,7 +43,7 @@ namespace VideoAutoClip.Helpers
             }
             // 去掉视频最后一秒
             string end_time = duration.Subtract(TimeSpan.FromSeconds(1)).ToString();
-            string ffmpegArgs = $"-ss {start_time} -t {end_time} -c copy -i \"{inputFilePath}\" \"{outputFilePath}\"";
+            string ffmpegArgs = $"-ss {start_time} -t {end_time} -i \"{inputFilePath}\" \"{outputFilePath}\"";
             // runFFmpeg(ffmpegArgs);
             return ffmpegArgs;
         }
@@ -121,6 +121,7 @@ namespace VideoAutoClip.Helpers
 
         public static void runFFmpeg(string ffmpegArgs)
         {
+            Log4Net.WriteLog("runFFmpeg", $"ffmpeg run path:{ffmpegPath}");
             if (string.IsNullOrEmpty(ffmpegPath))
             {
                 Log4Net.WriteError("runFFmpeg", "ffmpeg not found!", new Exception("ffmpeg not found!"));
@@ -153,7 +154,7 @@ namespace VideoAutoClip.Helpers
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Console.WriteLine("FFmpeg Output: " + e.Data);
+                Log4Net.WriteLog("Process_OutputDataReceived", "FFmpeg Output: " + e.Data);
             }
         }
 
@@ -161,7 +162,7 @@ namespace VideoAutoClip.Helpers
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Console.WriteLine("FFmpeg Error: " + e.Data);
+                Log4Net.WriteLog("Process_ErrorDataReceived", "FFmpeg Error: " + e.Data);
             }
         }
     }
