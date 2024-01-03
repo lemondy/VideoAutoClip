@@ -54,7 +54,7 @@ namespace VideoAutoClip.Helpers
              *  将多个视频，放缩1.1倍，加速1.1倍;
              *  然后合并在一起，使用叠化转场；
              */
-            string ffmpeg_cmd = "ffmpeg";
+            string ffmpeg_cmd = "";
             string filter_param = "";
             string va_concat = "";
             for (int i = 0; i < videoPaths.Count; i++)
@@ -66,8 +66,8 @@ namespace VideoAutoClip.Helpers
             int cnt = videoPaths.Count;
             ffmpeg_cmd += $"-filter_complex \"{filter_param}{va_concat}concat=n={cnt}:v=1:a=1[outv][outa]\" -map \"[outv]\" -map \"[outa\"";
 
-            ffmpeg_cmd += " -c:v libx264 -c:a copy -f mp4 -y " + outputFile;
-            Console.WriteLine("concatMultiVideo ffmpeg cmd:", ffmpeg_cmd);
+            ffmpeg_cmd += $" -c:v libx264 -c:a copy -f mp4 -y {outputFile}";
+           
             /*runFFmpeg(ffmpeg_cmd);*/
             return ffmpeg_cmd;
         }
