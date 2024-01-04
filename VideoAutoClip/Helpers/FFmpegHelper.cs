@@ -43,7 +43,7 @@ namespace VideoAutoClip.Helpers
             }
             // 去掉视频最后一秒
             string end_time = duration.Subtract(TimeSpan.FromSeconds(1)).ToString();
-            string ffmpegArgs = $"-ss {start_time} -t {end_time} -i \"{inputFilePath}\" \"{outputFilePath}\"";
+            string ffmpegArgs = $"-ss {start_time} -t {end_time} -i \"{inputFilePath}\" -y \"{outputFilePath}\"";
             // runFFmpeg(ffmpegArgs);
             return ffmpegArgs;
         }
@@ -64,9 +64,9 @@ namespace VideoAutoClip.Helpers
                 va_concat += $"[v{i}][a{i}]";
             }
             int cnt = videoPaths.Count;
-            ffmpeg_cmd += $"-filter_complex \"{filter_param}{va_concat}concat=n={cnt}:v=1:a=1[outv][outa]\" -map \"[outv]\" -map \"[outa\"";
+            ffmpeg_cmd += $" -filter_complex \"{filter_param}{va_concat}concat=n={cnt}:v=1:a=1[outv][outa]\" -map \"[outv]\" -map \"[outa]\"";
 
-            ffmpeg_cmd += $" -c:v libx264 -c:a copy -f mp4 -y {outputFile}";
+            ffmpeg_cmd += $" -c:v libx264 -c:a libmp3lame -f mp4 -y {outputFile}";
            
             /*runFFmpeg(ffmpeg_cmd);*/
             return ffmpeg_cmd;
@@ -82,7 +82,7 @@ namespace VideoAutoClip.Helpers
              * fontcolor: 指定字体颜色为白色,透明度0.2实现20%透明
              * fontsize: 指定字体大小为30像素
             */
-            string ffmpeg_cmd = $"ffmpeg -i {videoPath} -vf \"drawtext=text='{videoText}':x=(w-text_w)/2:y=h-th-5:fontcolor=white@0.2:fontsize=15\"";
+            string ffmpeg_cmd = $" -i {videoPath} -vf \"drawtext=text='{videoText}':x=(w-text_w)/2:y=h-th-5:fontcolor=white@0.2:fontsize=15\"";
             ffmpeg_cmd += " -y " + outputFile;
             /*runFFmpeg(ffmpeg_cmd);*/
             return ffmpeg_cmd;
@@ -121,7 +121,7 @@ namespace VideoAutoClip.Helpers
 
         public static void runFFmpeg(string ffmpegArgs)
         {
-            Log4Net.WriteLog("runFFmpeg", $"ffmpeg run path:{ffmpegPath}");
+            Log4Net.WriteLog("runFFmpeg", $"ffmpeg run path:{ffmpegPath}, parameters:{ffmpegArgs}");
             if (string.IsNullOrEmpty(ffmpegPath))
             {
                 Log4Net.WriteError("runFFmpeg", "ffmpeg not found!", new Exception("ffmpeg not found!"));
@@ -146,8 +146,8 @@ namespace VideoAutoClip.Helpers
             process.BeginErrorReadLine();
 
             process.WaitForExit();
-
-            Console.WriteLine("FFmpeg execution completed.");
+            process.Close();
+            Log4Net.WriteLog("runFFmpeg", "FFmpeg execution completed.");
         }
 
         static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)

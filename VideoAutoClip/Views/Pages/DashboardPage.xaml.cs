@@ -132,7 +132,7 @@ namespace VideoAutoClip.Views.Pages
             }
             Log4Net.WriteLog("VideoClip", string.Format("accomplish video cut cmd, cmd cnt:{0}", runFfmpegCmds.Count));
             // 2. 每个视频的比例变成1.1倍 视频和视频之间利用叠化转场；
-            string concatMultiVideo = videoOutDir + "\\concat_res.mp4";
+            string concatMultiVideo = videoOutDir + "\\" + "concatRes.mp4";
             runFfmpegCmds.Add(FFmpegHelper.concatMultiVideo(cuttedFilePath, concatMultiVideo));
             Log4Net.WriteLog("VideoClip", string.Format("accomplish concatMultiVideo, cmd cnt:{0}", runFfmpegCmds.Count));
             // 3. 视频增加文字水印
