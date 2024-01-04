@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace VideoAutoClip.Helpers
     {
 /*        static string ffmpegPath = AppDomain.CurrentDomain.BaseDirectory + "ffmpeg\\ffmpeg.exe"; // 替换为你的FFmpeg可执行文件的路径
 */
-        public static string ffmpegPath = GetPathFromEnv("PATH", "ffmpeg.exe");
+        private static readonly string ffmpegPath = GetPathFromEnv("PATH", "ffmpeg.exe");
 
         static string? GetPathFromEnv(string varName, string filename)
         {
@@ -26,7 +27,7 @@ namespace VideoAutoClip.Helpers
             return null;
         }
 
-        public static string videoCutDuration(string inputFilePath, string outputFilePath)
+        public static string VideoCutDuration(string inputFilePath, string outputFilePath)
         {
             /**
              * 生成ffmpeg处理的命令，在当前目录下建立tmp目录
@@ -47,24 +48,40 @@ namespace VideoAutoClip.Helpers
             // runFFmpeg(ffmpegArgs);
             return ffmpegArgs;
         }
+            
+        public static string UpdateVideoScaleAndPlayRate(string inputFilePath, string outputFilePath, double scale, double playRate)
+        {
+            string ffmpegArgs = $"-i \"{inputFilePath}\" -vf \"setpts=PTS/{playRate},scale=iw*{scale}:ih*{scale}\" -af \"atempo={playRate}\" -y \"{outputFilePath}\"";
+            return ffmpegArgs;
+        }
 
-        public static string concatMultiVideo(List<string> videoPaths, string outputFile)
+        public static string ConcatMultiVideo(List<string> videoPaths, string outputFile)
         {
             /**
-             *  将多个视频，放缩1.1倍，加速1.1倍;
-             *  然后合并在一起，使用叠化转场；
+             *  
+             *  合并在一起，使用叠化转场；
              */
             string ffmpeg_cmd = "";
             string filter_param = "";
-            string va_concat = "";
+            string diehua = "";
             for (int i = 0; i < videoPaths.Count; i++)
             {
                 ffmpeg_cmd += " -i " + videoPaths[i];
-                filter_param += $"[{i}]setpts=PTS*1.1,scale=iw*1.1:ih*1.1[v{i}];[{i}]asetpts=PTS*1.1[a{i}];";
-                va_concat += $"[v{i}][a{i}]";
+                filter_param += $"[{i}:v]setpts=PTS-STARTPTS[v{i}];";
             }
-            int cnt = videoPaths.Count;
-            ffmpeg_cmd += $" -filter_complex \"{filter_param}{va_concat}concat=n={cnt}:v=1:a=1[outv][outa]\" -map \"[outv]\" -map \"[outa]\"";
+            for (int i = 1; i < videoPaths.Count; i++)
+            {
+                if (i == 1)
+                {
+                    diehua += $"[v{i - 1}][v{i}]overlay=shortest=1:enable='between(t, 0, 1)'[out{i}]";
+                }
+                else
+                {
+                    diehua += $"[out{i - 1}][v{i}]overlay=shortest=1:enable='between(t, 0, 1)'[out{i}]";
+                }
+                   
+            }
+            ffmpeg_cmd += $" -filter_complex \"{filter_param};{diehua}\"";
 
             ffmpeg_cmd += $" -c:v libx264 -c:a libmp3lame -f mp4 -y {outputFile}";
            
@@ -72,7 +89,7 @@ namespace VideoAutoClip.Helpers
             return ffmpeg_cmd;
         }
 
-        public static string videoAddText(string videoPath, string videoText, string outputFile)
+        public static string VideoAddText(string videoPath, string videoText, string outputFile)
         {
             /*** 给视频底部居中增加文字
              * drawtext: 使用drawtext过滤器添加文字
@@ -119,7 +136,7 @@ namespace VideoAutoClip.Helpers
             return new TimeSpan();
         }
 
-        public static void runFFmpeg(string ffmpegArgs)
+        public static void RunFFmpeg(string ffmpegArgs)
         {
             Log4Net.WriteLog("runFFmpeg", $"ffmpeg run path:{ffmpegPath}, parameters:{ffmpegArgs}");
             if (string.IsNullOrEmpty(ffmpegPath))

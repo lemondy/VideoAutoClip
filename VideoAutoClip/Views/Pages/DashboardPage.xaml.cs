@@ -127,24 +127,36 @@ namespace VideoAutoClip.Views.Pages
             {
                 outputFile = videoOutDir + "\\" + file.Split("\\").Last();
                 cuttedFilePath.Add(outputFile);
-                ffmpegCmd = FFmpegHelper.videoCutDuration(file, outputFile);
+                ffmpegCmd = FFmpegHelper.VideoCutDuration(file, outputFile);
                 runFfmpegCmds.Add(ffmpegCmd);
             }
             Log4Net.WriteLog("VideoClip", string.Format("accomplish video cut cmd, cmd cnt:{0}", runFfmpegCmds.Count));
-            // 2. 每个视频的比例变成1.1倍 视频和视频之间利用叠化转场；
+
+
+            // 2. 每个视频的比例变成1.1倍 
+            List<string> scaleRatePath = new();
+            foreach (string file in cuttedFilePath)
+            {
+                outputFile = videoOutDir + "\\scale_" + file.Split("\\").Last();
+                scaleRatePath.Add(outputFile);
+                ffmpegCmd = FFmpegHelper.UpdateVideoScaleAndPlayRate(file, file, 1.1, 1.1);
+                runFfmpegCmds.Add(ffmpegCmd);
+            }
+            Log4Net.WriteLog("VideoClip", string.Format("accomplish video scale and rate cmd, cmd cnt:{0}", runFfmpegCmds.Count));
+            // 3. 视频和视频之间利用叠化转场；
             string concatMultiVideo = videoOutDir + "\\" + "concatRes.mp4";
-            runFfmpegCmds.Add(FFmpegHelper.concatMultiVideo(cuttedFilePath, concatMultiVideo));
+            runFfmpegCmds.Add(FFmpegHelper.ConcatMultiVideo(scaleRatePath, concatMultiVideo));
             Log4Net.WriteLog("VideoClip", string.Format("accomplish concatMultiVideo, cmd cnt:{0}", runFfmpegCmds.Count));
-            // 3. 视频增加文字水印
+            // 4. 视频增加文字水印
             finalVideoOutFile = videoOutDir + "\\finalVideo.mp4";
             if (!string.IsNullOrEmpty(waterMark))
             {
-                runFfmpegCmds.Add(FFmpegHelper.videoAddText(concatMultiVideo, waterMark, finalVideoOutFile));
+                runFfmpegCmds.Add(FFmpegHelper.VideoAddText(concatMultiVideo, waterMark, finalVideoOutFile));
             }
             Log4Net.WriteLog("VideoClip", string.Format("before run ffmpeg cmd, all:{0}", string.Join(",", runFfmpegCmds)));
             foreach (string cmd in runFfmpegCmds)
             {
-                FFmpegHelper.runFFmpeg(cmd);
+                FFmpegHelper.RunFFmpeg(cmd);
             }
 
             Log4Net.WriteLog("VideoClip", string.Format("accomplish video process, cmd cnt:{0}", runFfmpegCmds.Count));
