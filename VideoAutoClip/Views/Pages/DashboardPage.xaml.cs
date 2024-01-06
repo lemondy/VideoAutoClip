@@ -139,7 +139,7 @@ namespace VideoAutoClip.Views.Pages
             {
                 outputFile = videoOutDir + "\\scale_" + file.Split("\\").Last();
                 scaleRatePath.Add(outputFile);
-                ffmpegCmd = FFmpegHelper.UpdateVideoScaleAndPlayRate(file, file, 1.1, 1.1);
+                ffmpegCmd = FFmpegHelper.UpdateVideoScaleAndPlayRate(file, outputFile, 1.1, 1.1);
                 runFfmpegCmds.Add(ffmpegCmd);
             }
             Log4Net.WriteLog("VideoClip", string.Format("accomplish video scale and rate cmd, cmd cnt:{0}", runFfmpegCmds.Count));

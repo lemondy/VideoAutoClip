@@ -51,7 +51,7 @@ namespace VideoAutoClip.Helpers
             
         public static string UpdateVideoScaleAndPlayRate(string inputFilePath, string outputFilePath, double scale, double playRate)
         {
-            string ffmpegArgs = $"-i \"{inputFilePath}\" -vf \"setpts=PTS/{playRate},scale=iw*{scale}:ih*{scale}\" -af \"atempo={playRate}\" -y \"{outputFilePath}\"";
+            string ffmpegArgs = $" -i \"{inputFilePath}\" -vf \"setpts=PTS/{playRate},scale=iw*{scale}:ih*{scale},crop=trunc(iw/2)*2:trunc(ih/2)*2\" -af \"atempo={playRate}\" -y \"{outputFilePath}\"";
             return ffmpegArgs;
         }
 
@@ -66,24 +66,24 @@ namespace VideoAutoClip.Helpers
             string diehua = "";
             for (int i = 0; i < videoPaths.Count; i++)
             {
-                ffmpeg_cmd += " -i " + videoPaths[i];
-                filter_param += $"[{i}:v]setpts=PTS-STARTPTS[v{i}];";
+                ffmpeg_cmd += " -i \"" + videoPaths[i] +"\"";
+                filter_param += $"[{i}:v]fade=t=out:st=0:d=1[v{i}];";
             }
             for (int i = 1; i < videoPaths.Count; i++)
             {
                 if (i == 1)
                 {
-                    diehua += $"[v{i - 1}][v{i}]overlay=shortest=1:enable='between(t, 0, 1)'[out{i}]";
+                    diehua += $"[v{i - 1}][v{i}]overlay=shortest=1[out{i}];";
                 }
                 else
                 {
-                    diehua += $"[out{i - 1}][v{i}]overlay=shortest=1:enable='between(t, 0, 1)'[out{i}]";
+                    diehua += $"[out{i - 1}][v{i}]overlay=shortest=1[out{i}];";
                 }
                    
             }
-            ffmpeg_cmd += $" -filter_complex \"{filter_param};{diehua}\"";
+            ffmpeg_cmd += $" -filter_complex \"{filter_param}{diehua}\"";
 
-            ffmpeg_cmd += $" -c:v libx264 -c:a libmp3lame -f mp4 -y {outputFile}";
+            ffmpeg_cmd += $" -c:v libx264 -c:a libmp3lame -y \"{outputFile}\"";
            
             /*runFFmpeg(ffmpeg_cmd);*/
             return ffmpeg_cmd;
