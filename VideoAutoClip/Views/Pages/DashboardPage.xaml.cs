@@ -161,7 +161,7 @@ namespace VideoAutoClip.Views.Pages
 
             Log4Net.WriteLog("VideoClip", string.Format("accomplish video process, cmd cnt:{0}", runFfmpegCmds.Count));
 
-        }
+        } 
 
         private void SelectOutputDirButton_Click(object sender, RoutedEventArgs e)
         {

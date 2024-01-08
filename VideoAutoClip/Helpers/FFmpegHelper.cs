@@ -67,7 +67,9 @@ namespace VideoAutoClip.Helpers
             for (int i = 0; i < videoPaths.Count; i++)
             {
                 ffmpeg_cmd += " -i \"" + videoPaths[i] +"\"";
-                filter_param += $"[{i}:v]fade=t=out:st=0:d=1[v{i}];";
+                TimeSpan duration = GetVideoDuration(ffmpegPath, videoPaths[i]);
+                double totalSeconds = duration.TotalSeconds;
+                filter_param += $"[{i}:v]fade=t=out:st={totalSeconds}:d=1[v{i}];";
             }
             for (int i = 1; i < videoPaths.Count; i++)
             {
