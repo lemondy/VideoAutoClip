@@ -63,7 +63,7 @@ namespace VideoAutoClip.Helpers
             return ffmpegArgs;
         }
 
-            public static string DeleteFrameFromIndex(string inputFilePath, string outputFilePath, int nthFrame=6)
+        public static string DeleteFrameFromIndex(string inputFilePath, string outputFilePath, int nthFrame=6)
         {
             string ffmpegArgs = $" -i \"{inputFilePath}\" -vf \"select='mod(n,{nthFrame})'\" -y \"{outputFilePath}\"";
             return ffmpegArgs;
@@ -73,31 +73,44 @@ namespace VideoAutoClip.Helpers
         {
             /**
              *  
-             *  合并在一起，使用叠化转场；
+             *  合并在一起，使用叠化转场；在这之前要将视频处理成统一的分辨率
+             *  ffmpeg -vsync 0 -i "D:\workspace\VideoAutoClip\VideoAutoClip\bin\Debug\net7.0-windows\tmp\scale_176.WhydoIwannaeatit#satisfying.mp4" -i "D:\workspace\VideoAutoClip\VideoAutoClip\bin\Debug\net7.0-windows\tmp\scale_177.IthinkIneedanewlipstick#satisfying.mp4" -i "D:\workspace\VideoAutoClip\VideoAutoClip\bin\Debug\net7.0-windows\tmp\scale_179.Lookslikeapimple#satisfying.mp4" -filter_complex "[0]settb=AVTB[0:v];[1]settb=AVTB[1:v];[2]settb=AVTB[2:v];[0]atrim=0:10[0:a];[1]atrim=0:22[1:a];[2]atrim=0:12[2:a];[0:v][1:v]xfade=transition=fade:duration=1:offset=5[v1];[v1][2:v]xfade=transition=fade:duration=1:offset=13[video];[0:a][1:a]acrossfade=d=1:c1=tri:c2=tri[a1];[a1][2:a]acrossfade=d=1:c1=tri:c2=tri[audio]" -b:v 10M -map "[audio]" -map "[video]" -y "D:\workspace\VideoAutoClip\VideoAutoClip\bin\Debug\net7.0-windows\tmp\concat.mp4"
              */
             string ffmpeg_cmd = "";
-            string filter_param = "";
-            string diehua = "";
+         
+            string videoDiehua = "";
+            string audioDiehua = "";
+            string timeBased = "";
+            string audioTrim = "";
+            int totalSeconds = 0;
+            int startSecond = 0;
             for (int i = 0; i < videoPaths.Count; i++)
             {
                 ffmpeg_cmd += " -i \"" + videoPaths[i] +"\"";
                 TimeSpan duration = GetVideoDuration(ffmpegPath, videoPaths[i]);
-                double totalSeconds = duration.TotalSeconds;
-                filter_param += $"[{i}:v]fade=t=out:st={totalSeconds}:d=1[v{i}];";
-            }
-            for (int i = 1; i < videoPaths.Count; i++)
-            {
+                totalSeconds = (int)Math.Round(duration.TotalSeconds);
+                startSecond = startSecond + totalSeconds - 1;
+
+                timeBased += $"[{i}]settb=AVTB[{i}:v];";
+                audioTrim += $"[{i}]atrim=0:{totalSeconds}[{i}:a];";
                 if (i == 1)
                 {
-                    diehua += $"[v{i - 1}][v{i}]overlay=shortest=1[out{i}];";
+                    videoDiehua += $"[{i - 1}:v][{i}:v]xfade=transition=fade:duration=1:offset={startSecond}[v{i}];";
+                    audioDiehua += $"[{i - 1}:a][{i}:a]acrossfade=d=1:c1=tri:c2=tri[a{i}];";
                 }
-                else
+                else if ((i > 1) && (i < videoPaths.Count - 1))
                 {
-                    diehua += $"[out{i - 1}][v{i}]overlay=shortest=1[out{i}];";
+                    videoDiehua += $"[v{i - 1}][{i}:v]xfade=transition=fade:duration=1:offset={startSecond}[v{i}];";
+                    audioDiehua += $"[a{i - 1}][{i}:a]acrossfade=d=1:c1=tri:c2=tri[a{i}];";
                 }
-                   
+                else if (i == videoPaths.Count - 1)
+                {
+                    videoDiehua += $"[v{i - 1}][{i}:v]xfade=transition=fade:duration=1:offset={startSecond},format=yuv420p[video];";
+                    audioDiehua += $"[a{i - 1}][{i}:a]acrossfade=d=1:c1=tri:c2=tri[a{i}],format=fltp[audio];";
+                }
             }
-            ffmpeg_cmd += $" -filter_complex \"{filter_param}{diehua}\"";
+            
+            ffmpeg_cmd += $" -filter_complex \"{timeBased}{videoDiehua}{audioDiehua} -b:v 10M -map \"[audio]\" -map \"[video]\" \"";
 
             ffmpeg_cmd += $" -c:v libx264 -c:a libmp3lame -y \"{outputFile}\"";
            
