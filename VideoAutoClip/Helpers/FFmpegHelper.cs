@@ -52,6 +52,20 @@ namespace VideoAutoClip.Helpers
         public static string UpdateVideoScaleAndPlayRate(string inputFilePath, string outputFilePath, double scale, double playRate)
         {
             string ffmpegArgs = $" -i \"{inputFilePath}\" -vf \"setpts=PTS/{playRate},scale=iw*{scale}:ih*{scale},crop=trunc(iw/2)*2:trunc(ih/2)*2\" -af \"atempo={playRate}\" -y \"{outputFilePath}\"";
+
+            return ffmpegArgs;
+        }
+
+        public static string ScaleVideo(string inputFilePath, string outputFilePath)
+        {
+            // 视频转成9：16： 1080x1920
+            string ffmpegArgs = $" -i \"{inputFilePath}\" -vf \"scale=1080:1920,format=yuv420p\" -y \"{outputFilePath}\"";
+            return ffmpegArgs;
+        }
+
+            public static string DeleteFrameFromIndex(string inputFilePath, string outputFilePath, int nthFrame=6)
+        {
+            string ffmpegArgs = $" -i \"{inputFilePath}\" -vf \"select='mod(n,{nthFrame})'\" -y \"{outputFilePath}\"";
             return ffmpegArgs;
         }
 
