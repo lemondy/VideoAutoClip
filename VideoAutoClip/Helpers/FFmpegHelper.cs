@@ -82,7 +82,7 @@ namespace VideoAutoClip.Helpers
             string audioDiehua = "";
             string timeBased = "";
             string audioTrim = "";
-            int totalSeconds = 0;
+            int totalSeconds;
             int startSecond = 0;
             for (int i = 0; i < videoPaths.Count; i++)
             {
