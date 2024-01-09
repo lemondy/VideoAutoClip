@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Wpf.Ui.Controls;
 
 namespace VideoAutoClip.Helpers
 {
@@ -18,11 +19,15 @@ namespace VideoAutoClip.Helpers
 
         static string? GetPathFromEnv(string varName, string filename)
         {
+
             string[] paths = Environment.GetEnvironmentVariable(varName).Split(';');
+            Log4Net.WriteLog("GetPathFromEnv", "system path:" + paths);
             foreach (string path in paths)
             {
                 if (File.Exists(Path.Combine(path, filename)))
+                {
                     return Path.Combine(path, filename);
+                }
             }
             return null;
         }
@@ -59,7 +64,7 @@ namespace VideoAutoClip.Helpers
         public static string ScaleVideo(string inputFilePath, string outputFilePath)
         {
             // 视频转成9：16： 1080x1920
-            string ffmpegArgs = $" -i \"{inputFilePath}\" -vf \"scale=1080:1920,format=yuv420p\" -y \"{outputFilePath}\"";
+            string ffmpegArgs = $" -i \"{inputFilePath}\" -vf \"scale=1080:1920,format=yuv420p,fps=30\" -y \"{outputFilePath}\"";
             return ffmpegArgs;
         }
 
@@ -106,11 +111,11 @@ namespace VideoAutoClip.Helpers
                 else if (i == videoPaths.Count - 1)
                 {
                     videoDiehua += $"[v{i - 1}][{i}:v]xfade=transition=fade:duration=1:offset={startSecond},format=yuv420p[video];";
-                    audioDiehua += $"[a{i - 1}][{i}:a]acrossfade=d=1:c1=tri:c2=tri[a{i}],format=fltp[audio];";
+                    audioDiehua += $"[a{i - 1}][{i}:a]acrossfade=d=1:c1=tri:c2=tri[audio];";
                 }
             }
             
-            ffmpeg_cmd += $" -filter_complex \"{timeBased}{videoDiehua}{audioDiehua} -b:v 10M -map \"[audio]\" -map \"[video]\" \"";
+            ffmpeg_cmd += $" -filter_complex \"{timeBased}{videoDiehua}{audioDiehua}\" -b:v 10M -map \"[audio]\" -map \"[video]\"";
 
             ffmpeg_cmd += $" -c:v libx264 -c:a libmp3lame -y \"{outputFile}\"";
            
