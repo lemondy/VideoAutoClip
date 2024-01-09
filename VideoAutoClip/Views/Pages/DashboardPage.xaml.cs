@@ -145,14 +145,32 @@ namespace VideoAutoClip.Views.Pages
             Log4Net.WriteLog("VideoClip", string.Format("accomplish video scale and rate cmd, cmd cnt:{0}", runFfmpegCmds.Count));
 
             // 将视频每隔6帧删除一帧
+            List<string> deletedFramePath = new();
+            foreach(string file in scaleRatePath)
+            {
+                outputFile = videoOutDir + "\\df_" + file.Split("\\").Last();
+                deletedFramePath.Add(outputFile);
+                ffmpegCmd = FFmpegHelper.DeleteFrameFromIndex(file, outputFile, 6);
+                runFfmpegCmds.Add(ffmpegCmd);   
+            }
 
 
             // 将视频全部转成9：16格式、相同的尺寸
+            List<string> scaleRatePath2 = new();
+            foreach (string file in deletedFramePath)
+            {
+                outputFile = videoOutDir + "\\scale2_" + file.Split("\\").Last();
+                scaleRatePath2.Add(outputFile);
+                ffmpegCmd = FFmpegHelper.ScaleVideo(file, outputFile);
+                runFfmpegCmds.Add(ffmpegCmd);
+            }
+
+            Log4Net.WriteLog("VideoClip", string.Format("accomplish video scale and rate cmd, cmd cnt:{0}", runFfmpegCmds.Count));
 
 
             // 3. 视频和视频之间利用叠化转场；
             string concatMultiVideo = videoOutDir + "\\" + "concatRes.mp4";
-            runFfmpegCmds.Add(FFmpegHelper.ConcatMultiVideo(scaleRatePath, concatMultiVideo));
+            runFfmpegCmds.Add(FFmpegHelper.ConcatMultiVideo(scaleRatePath2, concatMultiVideo));
             Log4Net.WriteLog("VideoClip", string.Format("accomplish concatMultiVideo, cmd cnt:{0}", runFfmpegCmds.Count));
             // 4. 视频增加文字水印
             finalVideoOutFile = videoOutDir + "\\finalVideo.mp4";
