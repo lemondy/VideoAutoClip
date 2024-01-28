@@ -19,21 +19,11 @@
     <Grid Width="auto" Margin="0,75,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="400"/>
-            <RowDefinition Height="100" />
-            <RowDefinition Height="32*"/>
+            <RowDefinition Height="400*"/>
+            <RowDefinition Height="80*"/>
             <RowDefinition Height="80"/>
 
         </Grid.RowDefinitions>
-
-        <ui:Button
-            Command="{Binding ViewModel.CounterIncrementCommand, Mode=OneWay}"
-            Content="Click me!"
-            Icon="Fluent24" />
-        <TextBlock
-            Margin="120,0,0,0"
-            VerticalAlignment="Center"
-            Text="{Binding ViewModel.Counter, Mode=OneWay}" />
         <MediaElement 
             Grid.Row="1"
             x:Name="mediaPlayer"
@@ -42,59 +32,61 @@
             Stretch="Fill" 
             MediaOpened="Element_MediaOpened" 
             MediaEnded="Element_MediaEnded" Margin="337,0,386,58"/>
-        <StackPanel Orientation="Horizontal" Grid.Row="2">
-            <ui:Button 
-                 x:Name="VideoPlayButton"
-                 Content="播放"
-                Margin="10, 0,0,0"
-                 Width="60" Click="VideoPlayButton_Click" Appearance="Primary"/>
-            <ui:Button
-                     x:Name="VideoPauseButton"
-                     Content="暂停"
-                
-                     Width="60" Click="VideoPauseButton_Click" Appearance="Primary"/>
-            <Image Source="/Assets/Pause.png" Stretch="Fill" Width="60" Height="40"/>
-            <Image Height="59" Source="/Assets/volume.png" Stretch="Fill" Width="65"/>
-            <Slider 
-                     x:Name="VideoVolumeSlider"
-                     ValueChanged="ChangeMediaVolume" 
-                     Minimum="0" Maximum="1" Value="0.5"
-                     Width="375" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        </StackPanel>
+
+        <ui:Button 
+            Grid.Row="1"
+            x:Name="VideoPlayButton"
+            Content="播放"
+            Margin="17,735,0,0"
+            Width="60" Click="VideoPlayButton_Click" Appearance="Primary" VerticalAlignment="Top"/>
+        <ui:Button
+            x:Name="VideoPauseButton"
+            Content="暂停"
+            Grid.Row="1"
+            Width="60" Click="VideoPauseButton_Click" Appearance="Primary" Margin="82,735,0,0" VerticalAlignment="Top"/>
+        <Image Grid.Row="1" Source="/Assets/Pause.png" Stretch="Fill" Width="60" Height="40" Margin="159,731,1701,12"/>
+        <Image Grid.Row="1" Source="/Assets/volume.png" Stretch="Fill" Margin="1580,815,303,10" RenderTransformOrigin="-0.117,-0.279"/>
         <Slider 
-                Grid.Row="1"
-                  x:Name="timelineSlider" 
-                  HorizontalAlignment="Center"
-                  ValueChanged="SeekToMediaPosition"
-                  Width="1790" Margin="0,357,0,22"/>
+            Grid.Row="1"
+            x:Name="VideoVolumeSlider"
+            ValueChanged="ChangeMediaVolume" 
+            Minimum="0" Maximum="1" Value="0.5"
+            Width="235" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="1642,0,0,22" Height="0" />
+
+        <Slider 
+            Grid.Row="1"
+            x:Name="timelineSlider" 
+            HorizontalAlignment="Left"
+            ValueChanged="SeekToMediaPosition"
+            Width="977" Margin="239,742,0,17"/>
 
         <ui:Button
-            Grid.Row="3"
+            Grid.Row="2"
             Content="选择视频文件" 
-            Width="134"
+            Width="108"
             Foreground="Black" 
-            Click="SelectFileButton_Click" Appearance="Primary" Height="60" Margin="33,98,0,0" VerticalAlignment="Top" />
+            Click="SelectFileButton_Click" Appearance="Primary" Height="48" Margin="27,28,0,0" VerticalAlignment="Top" />
         <ui:Button
-            Grid.Row="3"
+            Grid.Row="2"
             Content="选择输出路径" 
-            Width="130"
+            Width="120"
             Foreground="Black" 
-            Click="SelectOutputDirButton_Click" Margin="273,103,0,0" Appearance="Primary" Height="60" VerticalAlignment="Top" />
+            Click="SelectOutputDirButton_Click" Margin="494,34,0,0" Appearance="Primary" Height="48" VerticalAlignment="Top" />
         <ui:TextBlock
             x:Name="selectedFileTextBlock"
-            Grid.Row="3"
+            Grid.Row="2"
             Foreground="Black"
             Text="选中的视频文件"
             IsEnabled="False" 
-            Margin="20,252,0,0"  Width="306" MaxHeight="200" ScrollViewer.CanContentScroll="True" UseLayoutRounding="True" Cursor="" TextTrimming="WordEllipsis" HorizontalAlignment="Left" TextWrapping="Wrap" Height="100"
+            Margin="171,32,0,25"  Width="306" MaxHeight="200" ScrollViewer.CanContentScroll="True" UseLayoutRounding="True" Cursor="" TextTrimming="WordEllipsis" HorizontalAlignment="Left" TextWrapping="Wrap" Height="100"
             />
         <ui:TextBlock
             x:Name="selectedOutputDirTextBlock"
-            Grid.Row="3"
+            Grid.Row="2"
             Foreground="Black"
             Text="处理后文件保存路径"
             IsEnabled="False" 
-            Margin="466,290,0,44" TextWrapping="Wrap" TextTrimming="WordEllipsis" HorizontalAlignment="Left" Width="352" MaxHeight="200" Height="98"
+            Margin="810,34,0,25" TextWrapping="Wrap" TextTrimming="WordEllipsis" HorizontalAlignment="Left" Width="352" MaxHeight="200" Height="98"
             />
         <ui:Button
             x:Name="DoVideoOperationBtn"
@@ -116,11 +108,11 @@
 
         <ui:TextBox
             x:Name="watermarkTextBox"
-            Grid.Row="3"
+            Grid.Row="2"
             Height="40"
             Width="200"
             PlaceholderText="请输入水印内容" 
-            Margin="496,118,1224,282" MaxLines="1"
+            Margin="1234,42,486,75" MaxLines="1"
             />
 
     </Grid>
